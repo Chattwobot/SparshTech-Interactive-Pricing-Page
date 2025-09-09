@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SparshTech Website Packages</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Vibrant Amethyst -->
+    <!-- Application Structure Plan: The SPA now functions as a unified product explorer. A new top-level navigation allows users to switch between "Website", "Mobile App", "AI & Automation", and "Software" and "Design" packages, transforming the entire page content. This architecture provides a single, central hub for all product information. The flow within each product category remains the same: broad overview, interactive package selection, visual data analysis, and a detailed feature matrix. This design streamlines the user's journey, making it easy to discover and compare different services without navigating away from the page. -->
+    <!-- Visualization & Content Choices: 
+        - Package Details: Report Info -> Package features/price. Goal -> Inform. Method -> Interactive Card (HTML/CSS). Interaction -> Content updates on button click with dynamic styling. Justification -> Centralizes focus on a single package, now visually enhanced with the new dark theme.
+        - Price & Feature Comparison: Report Info -> Price ranges, feature counts. Goal -> Compare. Viz -> Bar Chart (Chart.js). Interaction -> Bar highlighting synchronized with button selection. Justification -> The vibrant purple accent color makes the comparison pop and is easily readable against the dark background.
+        - Full Feature List: Report Info -> All features across packages. Goal -> Organize/Compare. Method -> HTML/Tailwind Grid Table. Interaction -> Static. Justification -> The dark table with light text provides a clear, high-contrast reference for detailed information.
+        - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #1A1A2E;
+            color: #E5E5E5;
+        }
+        .product-btn {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            background-color: #2D2D44;
+            color: #E5E5E5;
+            border: 2px solid transparent;
+        }
+        .product-btn.active {
+            background-color: #7C3AED;
+            color: #FFFFFF;
+            border-color: #7C3AED;
+        }
+        .package-btn {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            background-color: #2D2D44;
+            color: #E5E5E5;
+            border: 2px solid transparent;
+        }
+        .package-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(124, 58, 237, 0.3);
+        }
+        .package-btn.active {
+            background-color: #7C3AED;
+            color: #FFFFFF;
+            border-color: #7C3AED;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(124, 58, 237, 0.5);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 450px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 450px;
+            }
+        }
+        /* Footer-specific styles for icons */
+        .social-icon {
+            display: inline-block;
+            font-size: 1.5rem;
+            color: #E5E5E5;
+            transition: color 0.3s;
+        }
+        .social-icon:hover {
+            color: #7C3AED;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-7xl">
+
+        <header class="text-center mb-10">
+            <h1 id="main-title" class="text-4xl md:text-5xl font-bold text-purple-400">SparshTech Website Packages</h1>
+            <p id="main-subtitle" class="mt-4 text-lg text-gray-300 max-w-3xl mx-auto">An interactive guide to help you choose the perfect web solution for your business.</p>
+        </header>
+        
+        <div class="flex justify-center flex-wrap gap-4 mb-8">
+            <button id="website-btn" class="product-btn px-6 py-3 text-lg font-semibold rounded-full shadow-lg active">Website Packages</button>
+            <button id="app-btn" class="product-btn px-6 py-3 text-lg font-semibold rounded-full shadow-lg">Mobile App Packages</button>
+            <button id="ai-btn" class="product-btn px-6 py-3 text-lg font-semibold rounded-full shadow-lg">AI & Automation Packages</button>
+            <button id="software-btn" class="product-btn px-6 py-3 text-lg font-semibold rounded-full shadow-lg">Software Packages</button>
+            <button id="design-btn" class="product-btn px-6 py-3 text-lg font-semibold rounded-full shadow-lg">UI/UX Design Packages</button>
+        </div>
+
+        <main>
+            <section id="intro" class="mb-12 bg-[#2D2D44] p-6 rounded-2xl shadow-lg">
+                <h2 class="text-2xl font-bold text-white mb-3 text-center">Why Our Packages Work for You</h2>
+                <p id="intro-text" class="text-gray-400 text-center max-w-4xl mx-auto">
+                    Our tiered packages are crafted to match your business needs at every stage. The Basic plan provides a professional online presence, the Standard plan enhances customer engagement and branding, and the Premium plan empowers you with full e-commerce capabilities.
+                </p>
+            </section>
+
+            <section id="interactive-comparison" class="mb-12">
+                <h2 class="text-2xl font-bold text-white mb-6 text-center">Explore Our Solutions</h2>
+                <div id="package-selector" class="flex justify-center flex-wrap gap-4 mb-8">
+                </div>
+
+                <div id="package-details-card" class="bg-[#2D2D44] rounded-2xl shadow-xl p-8 transition-all duration-500 min-h-[400px]">
+                </div>
+            </section>
+            
+            <section id="visual-analyzer" class="mb-12 bg-[#2D2D44] p-6 rounded-2xl shadow-lg">
+                 <h2 class="text-2xl font-bold text-white mb-4 text-center">Package Value at a Glance</h2>
+                 <p class="text-gray-400 text-center mb-6 max-w-3xl mx-auto">This chart visualizes the price range and core features of each package. Use it to quickly assess the value and investment level that best fits your business goals.</p>
+                <div class="chart-container">
+                    <canvas id="packagesChart"></canvas>
+                </div>
+            </section>
+
+            <section id="feature-matrix">
+                <h2 class="text-2xl font-bold text-white mb-4 text-center">Detailed Feature Comparison</h2>
+                 <p class="text-gray-400 text-center mb-8 max-w-3xl mx-auto">For a complete overview, this table shows every feature included in each package. Easily compare the offerings side-by-side to ensure you select the plan with all the capabilities you require.</p>
+                <div class="overflow-x-auto bg-[#2D2D44] rounded-2xl shadow-lg">
+                    <table class="w-full text-left">
+                        <thead id="feature-table-head" class="bg-purple-900">
+                            <tr>
+                                <th class="p-4 font-semibold text-purple-300">Feature</th>
+                                <th class="p-4 font-semibold text-center text-purple-300">Basic</th>
+                                <th class="p-4 font-semibold text-center text-purple-300">Standard</th>
+                                <th class="p-4 font-semibold text-center text-purple-300">Premium</th>
+                            </tr>
+                        </thead>
+                        <tbody id="feature-table-body" class="divide-y divide-gray-700">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- Footer Section -->
+    <footer class="bg-[#1A1A2E] text-gray-400 py-12 px-4 sm:px-6 lg:px-8">
+        <div class="container mx-auto max-w-7xl">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <!-- About Section -->
+                <div>
+                    <!-- Updated with a new placeholder for the actual logo image -->
+                    <img src="https://placehold.co/150x40/2D2D44/E5E5E5?text=Sparsh+Tech+Logo" alt="Sparsh Tech Logo" class="mb-4">
+                    <p class="text-sm leading-relaxed">We create modern websites, mobile apps, AI-driven solutions, and software tools that empower businesses to grow, connect with customers, and thrive digitally—crafted with speed, simplicity, and intelligence.</p>
+                    <a href="https://www.sparshtech.in" target="_blank" class="text-purple-400 hover:underline text-sm mt-2 block">https://www.sparshtech.in</a>
+                </div>
+                
+                <!-- Services Section (Updated to buttons) -->
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-4">SERVICES</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" id="footer-website-btn" class="hover:text-purple-400 transition-colors">Website Packages</a></li>
+                        <li><a href="#" id="footer-app-btn" class="hover:text-purple-400 transition-colors">Mobile App Packages</a></li>
+                        <li><a href="#" id="footer-ai-btn" class="hover:text-purple-400 transition-colors">AI & Automation Packages</a></li>
+                        <li><a href="#" id="footer-software-btn" class="hover:text-purple-400 transition-colors">Software Packages</a></li>
+                        <li><a href="#" id="footer-design-btn" class="hover:text-purple-400 transition-colors">UI/UX Design Packages</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Contact Section with updated links -->
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-4">CONTACT</h3>
+                    <ul class="space-y-2">
+                        <li><a href="mailto:info@sparshtech.com" class="hover:text-purple-400 transition-colors">info@sparshtech.com</a></li>
+                        <li><a href="tel:+916358071225" class="hover:text-purple-400 transition-colors">+91 6358 071 225</a></li>
+                        <li class="flex space-x-4 mt-2">
+                            <!-- Social Media Icons (using SVG as a placeholder) -->
+                            <!-- X Link -->
+                            <a href="https://x.com/SparshTech27" target="_blank" class="social-icon hover:text-purple-400 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M18.901 1.996h3.425l-7.792 8.922 8.922 11.233h-7.07l-5.698-7.143-6.425 7.143h-3.425l7.792-8.922-8.922-11.233h7.07l5.698 7.143zM21.28 22.004h-1.905l-5.698-7.143-5.698 7.143h-1.905l7.258-9.123-7.258-9.123h1.905l5.698 7.143 5.698-7.143h1.905l-7.258 9.123z"/>
+                                </svg>
+                            </a>
+                            <!-- LinkedIn Link -->
+                            <a href="https://www.linkedin.com/company/sparshtechh/" target="_blank" class="social-icon hover:text-purple-400 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                                  <path d="M2.002 9.096h2.894v14.155H2.002zM3.449 7.42c-.958 0-1.735-.776-1.735-1.735S2.492 3.95 3.45 3.95c.958 0 1.735.776 1.735 1.735s-.777 1.735-1.736 1.735zM22.002 9.096h-2.889v1.317c.41.614.93 1.144 1.542 1.621.583.458 1.189.92 1.82 1.411v1.177c-1.226-1.258-2.585-2.257-4.102-2.998-1.517-.74-3.161-1.112-4.908-1.112-2.316 0-4.183.71-5.617 2.13-1.434 1.42-2.152 3.256-2.152 5.518v4.943h2.893v-4.944c0-2.348 1.458-3.52 4.373-3.52 2.915 0 4.374 1.172 4.374 3.52v4.944h2.893z"/>
+                                </svg>
+                            </a>
+                            <!-- Email Link -->
+                            <a href="mailto:info@sparshtech.com" class="social-icon hover:text-purple-400 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                                  <path d="M12 12.879l-7.733-4.64a.978.978 0 0 1-.267-.291.996.996 0 0 1 0-.616c.033-.11.1-.21.19-.283l7.653-4.592c.15-.09.324-.139.5-.139s.35.049.5.139l7.653 4.592c.09.073.157.173.19.283a.996.996 0 0 1 0 .616.978.978 0 0 1-.267.291L12 12.879zM12 14.281l-8.031-4.819a.996.996 0 0 0-.969-.995h-1.931a.996.996 0 0 0-.969.995L.031 9.497c-.015.092-.023.185-.023.284a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2c0-.099-.008-.192-.023-.284L22.969 8.467a.996.996 0 0 0-.969-.995H20.03a.996.996 0 0 0-.969.995L12 14.281zM12 16.732l-9.031-5.419a.996.996 0 0 0-1.969-.995h-1.931a.996.996 0 0 0-.969.995L11.031 16.997c.015.092.023.185.023.284a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2c0-.099-.008-.192-.023-.284L15.969 11.318a.996.996 0 0 0-1.969.995H12z"/>
+                                </svg>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <hr class="border-gray-700 my-8">
+
+            <!-- Bottom Bar (Updated) -->
+            <div class="flex flex-col md:flex-row justify-center items-center text-center text-sm text-gray-500">
+                <p class="mb-4 md:mb-0 text-purple-300 font-medium">© 2025 Sparsh Tech. All rights reserved. <br>We are MSME certified — UDYAM-GJ-24-0168714</p>
+                <div class="flex space-x-4">
+                    <a href="#" class="hover:text-purple-400 transition-colors"></a>
+                    <a href="#" class="hover:text-purple-400 transition-colors"></a>
+                    <a href="#" class="hover:text-purple-400 transition-colors"></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const productData = {
+            "website": {
+                title: "SparshTech Website Packages",
+                subtitle: "An interactive guide to help you choose the perfect web solution for your business.",
+                intro: "Our tiered packages are crafted to match your business needs at every stage. The Basic plan provides a professional online presence, the Standard plan enhances customer engagement and branding, and the Premium plan empowers you with full e-commerce capabilities.",
+                packages: {
+                    "Basic": {
+                        priceRange: "₹18,000 – ₹25,000",
+                        price: [18000, 25000],
+                        features: [
+                            "5–7 Pages Website",
+                            "Responsive Design",
+                            "Contact Form",
+                            "Basic SEO Setup",
+                            "Google Maps Integration",
+                            "Fast Loading"
+                        ],
+                        advantages: ["Affordable", "Entry-Level Web Presence", "Easy Contact & Location Visibility", "Mobile-Friendly Design"],
+                        benefits: ["Launch your online presence", "Help customers contact you easily", "Start building trust with a professional site"],
+                        color: 'rgba(124, 58, 237, 0.4)',
+                        borderColor: '#7C3AED',
+                    },
+                    "Standard": {
+                        priceRange: "₹35,000 – ₹45,000",
+                        price: [35000, 45000],
+                        features: [
+                            "Includes all Basic features",
+                            "Blog Section (Up to 10 posts)",
+                            "Social Media Integration",
+                            "Custom Logo Design",
+                            "Google Analytics Setup"
+                        ],
+                        advantages: ["Better Engagement with Customers", "Build Brand Authority", "Track Website Performance"],
+                        benefits: ["Share news and updates with blog", "Connect with customers on social media", "Measure visitor data to improve strategy"],
+                        color: 'rgba(124, 58, 237, 0.7)',
+                        borderColor: '#6D28D9',
+                    },
+                    "Premium": {
+                        priceRange: "₹55,000 – ₹70,000",
+                        price: [55000, 70000],
+                        features: [
+                            "Includes all Standard features",
+                            "E-commerce Feature (Up to 50 Products)",
+                            "Payment Gateway Integration",
+                            "Advanced SEO Optimization",
+                            "3 Months Free Support"
+                        ],
+                        advantages: ["Sell Online Instantly", "Accept Secure Payments", "Better Search Rankings", "Ongoing Support"],
+                        benefits: ["Start online selling easily", "Expand customer base", "Higher visibility on Google", "Peace of mind with support"],
+                        color: 'rgba(124, 58, 237, 1)',
+                        borderColor: '#5B21B6',
+                    }
+                },
+                allFeatures: [
+                    { name: "5–7 Pages Website", packages: ["Basic", "Standard", "Premium"] },
+                    { name: "Responsive Design", packages: ["Basic", "Standard", "Premium"] },
+                    { name: "Contact Form", packages: ["Basic", "Standard", "Premium"] },
+                    { name: "Basic SEO Setup", packages: ["Basic", "Standard", "Premium"] },
+                    { name: "Google Maps Integration", packages: ["Basic", "Standard", "Premium"] },
+                    { name: "Fast Loading", packages: ["Basic", "Standard", "Premium"] },
+                    { name: "Blog Section", packages: ["Standard", "Premium"] },
+                    { name: "Social Media Integration", packages: ["Standard", "Premium"] },
+                    { name: "Custom Logo Design", packages: ["Standard", "Premium"] },
+                    { name: "Google Analytics Setup", packages: ["Standard", "Premium"] },
+                    { name: "E-commerce Feature", packages: ["Premium"] },
+                    { name: "Payment Gateway Integration", packages: ["Premium"] },
+                    { name: "Advanced SEO Optimization", packages: ["Premium"] },
+                    { name: "3 Months Free Support", packages: ["Premium"] },
+                ]
+            },
+            "app": {
+                title: "SparshTech Mobile App Development Packages",
+                subtitle: "Tailored mobile app solutions for your business.",
+                intro: "Our app packages are designed to match your business needs at every stage. The Basic App plan provides a professional mobile presence, the Standard App plan enhances user engagement with advanced features, and the Premium App plan empowers you with full e-commerce capabilities.",
+                packages: {
+                    "Basic App": {
+                        priceRange: "₹50,000 – ₹80,000",
+                        price: [50000, 80000],
+                        features: [
+                            "Simple App (Android or iOS)",
+                            "Up to 5 Screens",
+                            "Basic UI Design",
+                            "Contact Form",
+                            "Basic Performance Optimization"
+                        ],
+                        advantages: ["Affordable mobile presence", "Simple to use", "Quick Development (2–4 weeks)"],
+                        benefits: ["Customers can view your business info on mobile", "Easy contact and navigation", "Professional mobile presence"],
+                        color: 'rgba(124, 58, 237, 0.4)',
+                        borderColor: '#7C3AED',
+                    },
+                    "Standard App": {
+                        priceRange: "₹1,00,000 – ₹1,50,000",
+                        price: [100000, 150000],
+                        features: [
+                            "Everything in Basic +",
+                            "Up to 10 Screens",
+                            "Social Media Integration",
+                            "Push Notifications",
+                            "Basic Analytics Integration"
+                        ],
+                        advantages: ["Better user engagement", "Push important updates directly", "Track user behavior"],
+                        benefits: ["Keep customers updated easily", "Increase engagement with notifications", "Better understand app usage for improvements"],
+                        color: 'rgba(124, 58, 237, 0.7)',
+                        borderColor: '#6D28D9',
+                    },
+                    "Premium App": {
+                        priceRange: "₹2,00,000 – ₹3,00,000",
+                        price: [200000, 300000],
+                        features: [
+                            "Everything in Standard +",
+                            "E-commerce Feature",
+                            "Payment Gateway Integration",
+                            "Advanced Analytics",
+                            "3 Months Free Support"
+                        ],
+                        advantages: ["Start selling products/services", "Secure online payments", "Monitor detailed user actions", "Support for first 3 months"],
+                        benefits: ["Expand business by selling online", "Safe and easy customer payments", "Analyze user trends to improve strategy", "Peace of mind with support"],
+                        color: 'rgba(124, 58, 237, 1)',
+                        borderColor: '#5B21B6',
+                    }
+                },
+                allFeatures: [
+                    { name: "Simple App (Android or iOS)", packages: ["Basic App", "Standard App", "Premium App"] },
+                    { name: "Up to 5/10 Screens", packages: ["Basic App", "Standard App", "Premium App"] },
+                    { name: "Basic UI/UX Design", packages: ["Basic App", "Standard App", "Premium App"] },
+                    { name: "Contact Form", packages: ["Basic App", "Standard App", "Premium App"] },
+                    { name: "Basic Performance Optimization", packages: ["Basic App", "Standard App", "Premium App"] },
+                    { name: "Social Media Integration", packages: ["Standard App", "Premium App"] },
+                    { name: "Push Notifications", packages: ["Standard App", "Premium App"] },
+                    { name: "Basic Analytics Integration", packages: ["Standard App", "Premium App"] },
+                    { name: "E-commerce Feature", packages: ["Premium App"] },
+                    { name: "Payment Gateway Integration", packages: ["Premium App"] },
+                    { name: "Advanced Analytics", packages: ["Premium App"] },
+                    { name: "3 Months Free Support", packages: ["Standard App", "Premium App"] }
+                ]
+            },
+            "ai": {
+                title: "SparshTech AI & Automation Packages",
+                subtitle: "Tailored AI solutions to automate your business processes.",
+                intro: "Our AI packages are designed to automate repetitive tasks and provide data-driven insights. The Basic AI plan offers a simple chatbot, the Standard plan enhances automation and lead capture, and the Premium plan provides a comprehensive solution for full business automation.",
+                packages: {
+                    "Basic AI": {
+                        priceRange: "₹30,000 – ₹50,000",
+                        price: [30000, 50000],
+                        features: [
+                            "Simple AI Chatbot for FAQs",
+                            "Up to 20 Predefined Q&A",
+                            "Integration with Website/WhatsApp",
+                            "Basic Analytics"
+                        ],
+                        advantages: ["Affordable automation", "Reduces repetitive customer queries", "Quick setup (1–2 weeks)"],
+                        benefits: ["Customers get instant responses", "Saves time for business owner", "Improves customer experience"],
+                        color: 'rgba(124, 58, 237, 0.4)',
+                        borderColor: '#7C3AED',
+                    },
+                    "Standard AI": {
+                        priceRange: "₹70,000 – ₹1,00,000",
+                        price: [70000, 100000],
+                        features: [
+                            "Includes all Basic features",
+                            "AI Chatbot with 50+ Q&A",
+                            "Email/Lead Automation",
+                            "Basic Predictive Analytics",
+                            "Integration with Social Media"
+                        ],
+                        advantages: ["Automates customer support & lead capture", "Improves engagement", "Tracks basic user trends"],
+                        benefits: ["Respond to more customers efficiently", "Collect leads automatically", "Make informed decisions based on data"],
+                        color: 'rgba(124, 58, 237, 0.7)',
+                        borderColor: '#6D28D9',
+                    },
+                    "Premium AI": {
+                        priceRange: "₹1,50,000 – ₹2,50,000",
+                        price: [150000, 250000],
+                        features: [
+                            "Includes all Standard features",
+                            "Advanced AI Chatbot (Unlimited Q&A + NLP)",
+                            "Sales & Marketing Automation",
+                            "Advanced Predictive Analytics & Reporting",
+                            "3 Months Free Support"
+                        ],
+                        advantages: ["Full business process automation", "Data-driven decision-making", "Reduces operational workload", "Professional-grade AI solution"],
+                        benefits: ["Automate multiple business processes", "Increase sales efficiency", "Improve customer satisfaction & retention"],
+                        color: 'rgba(124, 58, 237, 1)',
+                        borderColor: '#5B21B6',
+                    }
+                },
+                allFeatures: [
+                    { name: "Simple AI Chatbot", packages: ["Basic AI", "Standard AI", "Premium AI"] },
+                    { name: "Website/WhatsApp/Social Media Integration", packages: ["Basic AI", "Standard AI", "Premium AI"] },
+                    { name: "Basic Analytics", packages: ["Basic AI", "Standard AI", "Premium AI"] },
+                    { name: "Email/Lead Automation", packages: ["Standard AI", "Premium AI"] },
+                    { name: "Basic Predictive Analytics", packages: ["Standard AI", "Premium AI"] },
+                    { name: "Advanced AI Chatbot (Unlimited Q&A + NLP)", packages: ["Premium AI"] },
+                    { name: "Sales & Marketing Automation", packages: ["Premium AI"] },
+                    { name: "Advanced Predictive Analytics & Reporting", packages: ["Premium AI"] },
+                    { name: "3 Months Free Support", packages: ["Standard AI", "Premium AI"] },
+                ]
+            },
+            "software": {
+                title: "SparshTech Custom Software Packages",
+                subtitle: "Tailored software solutions designed to fit your unique business processes.",
+                intro: "Our custom software packages are designed to streamline your business operations and reduce manual effort. The Basic Software plan provides a small-scale tool for essential tasks, the Standard plan offers advanced features for team collaboration, and the Premium plan delivers a scalable, end-to-end solution with full automation.",
+                packages: {
+                    "Basic Software": {
+                        priceRange: "₹25,000 – ₹40,000",
+                        price: [25000, 40000],
+                        features: [
+                            "Small-scale Custom Tool",
+                            "Up to 5 Modules/Features",
+                            "Simple Database Integration",
+                            "Basic Reporting",
+                            "Web-based Access"
+                        ],
+                        advantages: ["Affordable solution", "Quick setup", "Tailored for small operations"],
+                        benefits: ["Automate basic processes", "Save manual effort", "Gain simple insights"],
+                        color: 'rgba(124, 58, 237, 0.4)',
+                        borderColor: '#7C3AED',
+                    },
+                    "Standard Software": {
+                        priceRange: "₹50,000 – ₹80,000",
+                        price: [50000, 80000],
+                        features: [
+                            "Everything in Basic +",
+                            "Up to 10 Modules/Features",
+                            "Advanced Database & Analytics",
+                            "User Management System",
+                            "Integration with Email & Notifications",
+                            "Basic Training & Support"
+                        ],
+                        advantages: ["Streamlines multiple processes", "Centralized data management", "Improves team collaboration"],
+                        benefits: ["Efficient business operations", "Reduce manual errors", "Better coordination"],
+                        color: 'rgba(124, 58, 237, 0.7)',
+                        borderColor: '#6D28D9',
+                    },
+                    "Premium Software": {
+                        priceRange: "₹1,00,000 – ₹1,80,000",
+                        price: [100000, 180000],
+                        features: [
+                            "Everything in Standard +",
+                            "Unlimited Modules/Features",
+                            "Cloud Deployment & Security",
+                            "Advanced Analytics & Dashboards",
+                            "API Integration with 3rd Party Tools",
+                            "3 Months Free Support"
+                        ],
+                        advantages: ["Full automation", "Scalable & secure", "Data-driven decision-making"],
+                        benefits: ["Automate end-to-end processes", "Make informed decisions", "Grow securely"],
+                        color: 'rgba(124, 58, 237, 1)',
+                        borderColor: '#5B21B6',
+                    }
+                },
+                allFeatures: [
+                    { name: "Custom Tool", packages: ["Basic Software", "Standard Software", "Premium Software"] },
+                    { name: "Simple Database Integration", packages: ["Basic Software", "Standard Software", "Premium Software"] },
+                    { name: "Web-based Access", packages: ["Basic Software", "Standard Software", "Premium Software"] },
+                    { name: "User Management System", packages: ["Standard Software", "Premium Software"] },
+                    { name: "Integration with Email & Notifications", packages: ["Standard Software", "Premium Software"] },
+                    { name: "Cloud Deployment & Security", packages: ["Premium Software"] },
+                    { name: "Advanced Analytics & Dashboards", packages: ["Premium Software"] },
+                    { name: "API Integration", packages: ["Premium Software"] },
+                    { name: "3 Months Free Support", packages: ["Standard Software", "Premium Software"] },
+                ]
+            },
+            "design": {
+                title: "SparshTech UI/UX Design Packages",
+                subtitle: "Tailored design solutions for a professional and engaging user experience.",
+                intro: "Our UI/UX design packages are crafted to give your product a professional and engaging look. The Basic plan provides an affordable and quick visual solution, the Standard plan focuses on enhancing user experience, and the Premium plan offers a full professional-grade design process with user testing and data analysis.",
+                packages: {
+                    "Basic Design": {
+                        priceRange: "₹7,500 – ₹15,500",
+                        price: [7500, 15500],
+                        features: [
+                            "Design for up to 5 Pages/Screens (Website or App)",
+                            "Basic Wireframes",
+                            "Standard Color & Font Theme",
+                            "Simple UI Layout"
+                        ],
+                        advantages: ["Affordable design solution", "Professional visual appearance", "Quick turnaround"],
+                        benefits: ["Website or app looks professional", "Customers navigate easily", "Ready-to-use design"],
+                        color: 'rgba(124, 58, 237, 0.4)',
+                        borderColor: '#7C3AED',
+                    },
+                    "Standard Design": {
+                        priceRange: "₹15,000 – ₹30,000",
+                        price: [15000, 30000],
+                        features: [
+                            "Everything in Basic +",
+                            "Up to 10 Pages/Screens",
+                            "Custom Wireframes & Prototypes",
+                            "Enhanced UI Elements & Icons",
+                            "Basic Usability Testing"
+                        ],
+                        advantages: ["Better user experience", "More engaging design", "Reduces user errors and confusion"],
+                        benefits: ["Customers find it easy & enjoyable to use", "Increase interaction & engagement", "Build brand trust with appealing visuals"],
+                        color: 'rgba(124, 58, 237, 0.7)',
+                        borderColor: '#6D28D9',
+                    },
+                    "Premium Design": {
+                        priceRange: "₹30,000 – ₹50,000",
+                        price: [30000, 50000],
+                        features: [
+                            "Everything in Standard +",
+                            "Unlimited Pages/Screens",
+                            "Advanced Interactive Prototypes",
+                            "User Journey Mapping & Persona Creation",
+                            "Usability Testing & Feedback Analysis",
+                            "1 Month Free Support"
+                        ],
+                        advantages: ["Full professional-grade design", "Optimized user experience", "Data-driven design improvements"],
+                        benefits: ["Customers love using your product", "Higher conversions & engagement", "Reduced bounce rates & support queries"],
+                        color: 'rgba(124, 58, 237, 1)',
+                        borderColor: '#5B21B6',
+                    }
+                },
+                allFeatures: [
+                    { name: "Design for up to 5/10/Unlimited Pages/Screens", packages: ["Basic Design", "Standard Design", "Premium Design"] },
+                    { name: "Basic/Custom/Advanced Wireframes & Prototypes", packages: ["Basic Design", "Standard Design", "Premium Design"] },
+                    { name: "Standard/Enhanced UI Elements", packages: ["Basic Design", "Standard Design", "Premium Design"] },
+                    { name: "Usability Testing & Feedback Analysis", packages: ["Standard Design", "Premium Design"] },
+                    { name: "User Journey Mapping & Persona Creation", packages: ["Premium Design"] },
+                    { name: "1 Month Free Support", packages: ["Premium Design"] }
+                ]
+            }
+        };
+
+        const mainTitle = document.getElementById('main-title');
+        const mainSubtitle = document.getElementById('main-subtitle');
+        const introText = document.getElementById('intro-text');
+        const websiteBtn = document.getElementById('website-btn');
+        const appBtn = document.getElementById('app-btn');
+        const aiBtn = document.getElementById('ai-btn');
+        const softwareBtn = document.getElementById('software-btn');
+        const designBtn = document.getElementById('design-btn');
+        const footerWebsiteBtn = document.getElementById('footer-website-btn');
+        const footerAppBtn = document.getElementById('footer-app-btn');
+        const footerAiBtn = document.getElementById('footer-ai-btn');
+        const footerSoftwareBtn = document.getElementById('footer-software-btn');
+        const footerDesignBtn = document.getElementById('footer-design-btn');
+        const packageSelector = document.getElementById('package-selector');
+        const detailsCard = document.getElementById('package-details-card');
+        const featureTableBody = document.getElementById('feature-table-body');
+        const featureTableHead = document.getElementById('feature-table-head');
+        
+        let packagesChart;
+        let currentState = {
+            product: 'website',
+            package: 'Basic'
+        };
+
+        function createListItems(items) {
+            return items.map(item => `
+                <li class="flex items-start">
+                    <span class="text-purple-400 mr-2 mt-1">✓</span>
+                    <span>${item}</span>
+                </li>
+            `).join('');
+        }
+
+        function updateProduct(product) {
+            currentState.product = product;
+            const data = productData[product];
+            currentState.package = Object.keys(data.packages)[0];
+
+            mainTitle.textContent = data.title;
+            mainSubtitle.textContent = data.subtitle;
+            introText.textContent = data.intro;
+            
+            websiteBtn.classList.toggle('active', product === 'website');
+            appBtn.classList.toggle('active', product === 'app');
+            aiBtn.classList.toggle('active', product === 'ai');
+            softwareBtn.classList.toggle('active', product === 'software');
+            designBtn.classList.toggle('active', product === 'design');
+
+            renderPackageSelector(product);
+            updateDisplay(currentState.package);
+            updateFeatureTable(product);
+        }
+
+        function renderPackageSelector(product) {
+            packageSelector.innerHTML = '';
+            const data = productData[product];
+            Object.keys(data.packages).forEach(name => {
+                const button = document.createElement('button');
+                button.textContent = name;
+                button.dataset.package = name;
+                button.className = 'package-btn px-6 py-3 text-lg font-semibold rounded-full shadow-lg';
+                button.addEventListener('click', () => updateDisplay(name));
+                packageSelector.appendChild(button);
+            });
+        }
+
+        function updateDisplay(packageName) {
+            currentState.package = packageName;
+            const data = productData[currentState.product].packages[packageName];
+
+            detailsCard.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                    <div class="md:col-span-4">
+                        <h2 class="text-3xl font-bold text-purple-400">${packageName} Package</h2>
+                        <p class="text-2xl font-medium text-gray-400 mt-2 mb-6">${data.priceRange}</p>
+                        <h3 class="text-xl font-semibold text-white mb-3 border-b border-purple-900 pb-2">Key Features</h3>
+                        <ul class="space-y-2 text-gray-400">${createListItems(data.features)}</ul>
+                    </div>
+                    <div class="md:col-span-4">
+                        <h3 class="text-xl font-semibold text-white mb-3 border-b border-purple-900 pb-2">Advantages</h3>
+                        <ul class="space-y-2 text-gray-400">${createListItems(data.advantages)}</ul>
+                    </div>
+                    <div class="md:col-span-4">
+                        <h3 class="text-xl font-semibold text-white mb-3 border-b border-purple-900 pb-2">User Benefits</h3>
+                        <ul class="space-y-2 text-gray-400">${createListItems(data.benefits)}</ul>
+                    </div>
+                </div>
+            `;
+
+            document.querySelectorAll('.package-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.package === packageName);
+            });
+            
+            updateChartHighlight();
+        }
+
+        function updateChartHighlight() {
+            if (!packagesChart) return;
+            
+            const currentPackages = productData[currentState.product].packages;
+            const backgroundColors = Object.keys(currentPackages).map(pName => {
+                return currentPackages[pName].color;
+            });
+            
+            const borderColors = Object.keys(currentPackages).map(pName => {
+                return pName === currentState.package ? currentPackages[pName].borderColor : 'rgba(0,0,0,0)';
+            });
+
+            packagesChart.data.datasets[0].data = Object.values(currentPackages).map(p => p.price);
+            packagesChart.data.labels = Object.keys(currentPackages);
+            packagesChart.data.datasets[0].backgroundColor = backgroundColors;
+            packagesChart.data.datasets[0].borderColor = borderColors;
+            packagesChart.update();
+        }
+
+        function updateFeatureTable(product) {
+            const currentFeatures = productData[product].allFeatures;
+            const currentPackages = Object.keys(productData[product].packages);
+            
+            featureTableHead.innerHTML = `
+                <tr>
+                    <th class="p-4 font-semibold text-purple-300">Feature</th>
+                    ${currentPackages.map(p => `<th class="p-4 font-semibold text-center text-purple-300">${p}</th>`).join('')}
+                </tr>
+            `;
+
+            featureTableBody.innerHTML = '';
+            currentFeatures.forEach(feature => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-purple-900';
+                row.innerHTML = `
+                    <td class="p-4 text-gray-400">${feature.name}</td>
+                    ${currentPackages.map(p => `<td class="p-4 text-center text-2xl font-bold">${feature.packages.includes(p) ? '<span class="text-purple-400">✓</span>' : '<span class="text-gray-600">-</span>'}</td>`).join('')}
+                `;
+                featureTableBody.appendChild(row);
+            });
+        }
+
+        function initializeChart() {
+            const ctx = document.getElementById('packagesChart').getContext('2d');
+            packagesChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Price Range (₹)',
+                        data: [],
+                        borderWidth: 2,
+                        borderRadius: 8,
+                        borderSkipped: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#A0A0A0',
+                                callback: function(value, index, values) {
+                                    return '₹' + value.toLocaleString('en-IN');
+                                }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#A0A0A0'
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            backgroundColor: '#2D2D44',
+                            titleColor: '#FFFFFF',
+                            bodyColor: '#E5E5E5',
+                            borderColor: '#7C3AED',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.raw;
+                                    return `Price Range: ₹${value[0].toLocaleString('en-IN')} - ₹${value[1].toLocaleString('en-IN')}`;
+                                }
+                            }
+                        },
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        function initialize() {
+            initializeChart();
+            websiteBtn.addEventListener('click', () => updateProduct('website'));
+            appBtn.addEventListener('click', () => updateProduct('app'));
+            aiBtn.addEventListener('click', () => updateProduct('ai'));
+            softwareBtn.addEventListener('click', () => updateProduct('software'));
+            designBtn.addEventListener('click', () => updateProduct('design'));
+            
+            // Footer buttons
+            footerWebsiteBtn.addEventListener('click', () => updateProduct('website'));
+            footerAppBtn.addEventListener('click', () => updateProduct('app'));
+            footerAiBtn.addEventListener('click', () => updateProduct('ai'));
+            footerSoftwareBtn.addEventListener('click', () => updateProduct('software'));
+            footerDesignBtn.addEventListener('click', () => updateProduct('design'));
+
+            updateProduct('website');
+        }
+
+        document.addEventListener('DOMContentLoaded', initialize);
+    </script>
+</body>
+</html>
